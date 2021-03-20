@@ -30,7 +30,7 @@ dependencies:
   sembast: ^3.0.0+2
 
   # UI
-  google_maps_flutter: ^2.0.1
+  yandex_mapkit: ^0.5.1
   flutter_svg: 0.21.0-nullsafety.0
   cupertino_icons: ^1.0.2
   webview_flutter: ^2.0.1
@@ -68,4 +68,4 @@ flutter:
   assets:
     - assets/
     - assets/svg/
-    - assets/png/
+    # - assets/png/
