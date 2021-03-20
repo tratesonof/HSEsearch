@@ -1,0 +1,71 @@
+name: hse_search
+description: HSE search.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.10.0 <3.0.0"
+  flutter: ">=1.22.6 <2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  # Architecture
+  bloc: ^7.0.0-nullsafety.3
+  flutter_bloc: ^7.0.0-nullsafety.3
+  provider: ^5.0.0
+
+  # Network
+  dio: ^3.0.10
+  dio_flutter_transformer: ^3.0.2
+  pretty_dio_logger: ^1.1.1
+
+  # Database
+  sembast: ^3.0.0+2
+
+  # UI
+  google_maps_flutter: ^2.0.1
+  flutter_svg: 0.21.0-nullsafety.0
+  cupertino_icons: ^1.0.2
+  webview_flutter: ^2.0.1
+  intl: ^0.17.0
+
+  # Utils
+  uuid: ^3.0.1
+  path_provider: ^2.0.1
+  freezed_annotation: ^0.12.0
+  logger: ^1.0.0-nullsafety.0
+
+#dependency_overrides:
+#  path_provider: ^2.0.1
+#  provider: ^5.0.0
+#  file: ^6.1.0
+#  uuid: ^3.0.1
+#  permission_handler_platform_interface: ^2.0.2
+#  plugin_platform_interface: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # flutter packages pub run build_runner watch
+  # flutter packages pub run build_runner watch --delete-conflicting-outputs
+  build_runner: ^1.11.5
+  json_serializable: ^3.5.1
+  freezed: ^0.12.0
+
+  very_good_analysis: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/svg/
+    - assets/png/
