@@ -7,8 +7,8 @@ part 'state.freezed.dart';
 @freezed
 abstract class ViewState with _$ViewState {
   const factory ViewState.content({
-    @required String email,
-    @required String password,
+    required String email,
+    required String password,
   }) = ContentState;
 
   const factory ViewState.loading() = LoadingState;

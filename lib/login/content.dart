@@ -24,8 +24,9 @@ class _LoginScreenState extends State<LoginScreen>
     final _cubit = context.read<LoginCubit>();
 
     setOnSingleEvent(_cubit.singleEvents.listen((event) {
-      if (event is NavigateToMapSingleEvent){
-        Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => MapScreen()));
+      if (event is NavigateToMapSingleEvent) {
+        Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(builder: (context) => MapScreen()));
       }
     }));
 
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen>
 }
 
 class LoginContent extends StatefulWidget {
-  const LoginContent(this.state, {Key key}) : super(key: key);
+  const LoginContent(this.state, {Key? key}) : super(key: key);
 
   final ContentState state;
 
@@ -55,8 +56,8 @@ class LoginContent extends StatefulWidget {
 
 class _LoginContentState extends State<LoginContent> {
   bool passwordInvisibility = true;
-  FocusNode focusEmail;
-  FocusNode focusPassword;
+  FocusNode? focusEmail;
+  FocusNode? focusPassword;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool correctEmail = false;
@@ -66,131 +67,143 @@ class _LoginContentState extends State<LoginContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: Colors.grey[200],
-        child: Column(
-          children: [
-            Center(
-              child: SvgPicture.asset(
-                'assets/svg/ic_logo.svg',
-                color: const Color(0xff1e88e5),
-                width: 320,
-                height: 320,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 54, 24, 16),
-              child: TextFormField(
-                focusNode: focusEmail,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(focusPassword);
-                },
-                onChanged: (_) {
-                  if (emailRegex.hasMatch(emailController.text)) {
-                    setState(() {
-                      correctEmail = true;
-                    });
-                  } else {
-                    setState(() {
-                      correctEmail = false;
-                    });
-                  }
-                },
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autocorrect: false,
-                maxLength: 64,
-                controller: emailController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  hintText: 'Email',
-                  counterText: '',
-                ),
-                style: const TextStyle(
-                  fontSize: 14,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          color: Colors.grey[200],
+          child: Column(
+            children: [
+              Center(
+                child: SvgPicture.asset(
+                  'assets/svg/ic_logo.svg',
+                  color: const Color(0xff1e88e5),
+                  width: 320,
+                  height: 320,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-              child: TextFormField(
-                obscureText: passwordInvisibility,
-                controller: passwordController,
-                autocorrect: false,
-                maxLength: 64,
-                autofocus: false,
-                focusNode: focusPassword,
-                onChanged: (_) {
-                  if (passwordController.text.length > 6) {
-                    setState(() {
-                      correctPassword = true;
-                    });
-                  } else {
-                    setState(() {
-                      correctPassword = false;
-                    });
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 54, 24, 16),
+                child: TextFormField(
+                  focusNode: focusEmail,
+                  onFieldSubmitted: passwordController.text.isEmpty
+                      ? (_) {
+                    FocusScope.of(context).requestFocus(focusPassword);
                   }
-                },
-                decoration: InputDecoration(
-                  counterText: '',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      passwordInvisibility
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
+                      : null,
+                  onChanged: (_) {
+                    if (emailRegex.hasMatch(emailController.text)) {
                       setState(() {
-                        passwordInvisibility = !passwordInvisibility;
+                        correctEmail = true;
                       });
-                    },
+                    } else {
+                      setState(() {
+                        correctEmail = false;
+                      });
+                    }
+                  },
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  autocorrect: false,
+                  maxLength: 64,
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.person),
+                    labelText: 'Email',
+                    counterText: '',
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  style: const TextStyle(
+                    fontSize: 16,
                   ),
-                  hintText: passwordInvisibility ? '••••••••' : 'Password',
-                ),
-                style: const TextStyle(
-                  fontSize: 14,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-              child: SizedBox(
-                width: double.infinity,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: correctEmail && correctPassword
-                        ? Colors.blue
-                        : const Color(0xff9e9e9e),
-                    borderRadius: BorderRadius.circular(16),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+                child: TextFormField(
+                  obscureText: passwordInvisibility,
+                  controller: passwordController,
+                  autocorrect: false,
+                  maxLength: 64,
+                  autofocus: false,
+                  focusNode: focusPassword,
+                  onFieldSubmitted: correctEmail && correctPassword
+                      ? (_) {
+                    context.read<LoginCubit>().login(
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
+                  }
+                      : null,
+                  onChanged: (_) {
+                    if (passwordController.text.length > 6) {
+                      setState(() {
+                        correctPassword = true;
+                      });
+                    } else {
+                      setState(() {
+                        correctPassword = false;
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.vpn_key),
+                    counterText: '',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        passwordInvisibility
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          passwordInvisibility = !passwordInvisibility;
+                        });
+                      },
+                    ),
+                    labelText: 'Password',
                   ),
-                  child: TextButton(
-                    onPressed: correctEmail && correctPassword
-                        ? () {
-                            context.read<LoginCubit>().login(
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                );
-                          }
-                        : null,
-                    child: Text(
-                      'Sign in',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: correctEmail && correctPassword
-                            ? Colors.white
-                            : const Color(0xffe0e0e0),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: correctEmail && correctPassword
+                          ? Colors.blue
+                          : const Color(0xff9e9e9e),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: TextButton(
+                      onPressed: correctEmail && correctPassword
+                          ? () {
+                        context.read<LoginCubit>().login(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
+                      }
+                          : null,
+                      child: Text(
+                        'Sign in',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: correctEmail && correctPassword
+                              ? Colors.white
+                              : const Color(0xffe0e0e0),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

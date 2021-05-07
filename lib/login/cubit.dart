@@ -8,7 +8,7 @@ class LoginCubit extends Cubit<ViewState>
     with SingleEventMixin<SingleEvent, ViewState> {
   LoginCubit() : super(const ViewState.content(email: '', password: ''));
 
-  void login({@required String email, @required String password}) async {
+  void login({@required String? email, @required String? password}) async {
     emit(const ViewState.loading());
     await Future.delayed(const Duration(seconds: 2));
     send(const NavigateToMapSingleEvent());

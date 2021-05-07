@@ -24,7 +24,7 @@ mixin SingleEventMixin<E, S> on Cubit<S> {
 }
 
 mixin SingleEventSubscription<W extends StatefulWidget> on State<W> {
-  StreamSubscription _singleEventsSubscription;
+  StreamSubscription? _singleEventsSubscription;
 
   @override
   void dispose() {

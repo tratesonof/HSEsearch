@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'state.dart';
 
@@ -9,52 +9,56 @@ part of 'state.dart';
 
 T _$identity<T>(T value) => value;
 
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 /// @nodoc
 class _$ViewStateTearOff {
   const _$ViewStateTearOff();
 
-// ignore: unused_element
-  ContentState content({@required String email, @required String password}) {
+  ContentState content({required String email, required String password}) {
     return ContentState(
       email: email,
       password: password,
     );
   }
 
-// ignore: unused_element
   LoadingState loading() {
     return const LoadingState();
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ViewState = _$ViewStateTearOff();
 
 /// @nodoc
 mixin _$ViewState {
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult content(String email, String password),
-    @required TResult loading(),
-  });
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email, String password) content,
+    required TResult Function() loading,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult content(String email, String password),
-    TResult loading(),
-    @required TResult orElse(),
-  });
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email, String password)? content,
+    TResult Function()? loading,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult content(ContentState value),
-    @required TResult loading(LoadingState value),
-  });
+  TResult map<TResult extends Object?>({
+    required TResult Function(ContentState value) content,
+    required TResult Function(LoadingState value) loading,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult content(ContentState value),
-    TResult loading(LoadingState value),
-    @required TResult orElse(),
-  });
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ContentState value)? content,
+    TResult Function(LoadingState value)? loading,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -92,21 +96,26 @@ class _$ContentStateCopyWithImpl<$Res> extends _$ViewStateCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object email = freezed,
-    Object password = freezed,
+    Object? email = freezed,
+    Object? password = freezed,
   }) {
     return _then(ContentState(
-      email: email == freezed ? _value.email : email as String,
-      password: password == freezed ? _value.password : password as String,
+      email: email == freezed
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      password: password == freezed
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
+
 class _$ContentState with DiagnosticableTreeMixin implements ContentState {
-  const _$ContentState({@required this.email, @required this.password})
-      : assert(email != null),
-        assert(password != null);
+  const _$ContentState({required this.email, required this.password});
 
   @override
   final String email;
@@ -151,23 +160,20 @@ class _$ContentState with DiagnosticableTreeMixin implements ContentState {
 
   @override
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult content(String email, String password),
-    @required TResult loading(),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email, String password) content,
+    required TResult Function() loading,
   }) {
-    assert(content != null);
-    assert(loading != null);
     return content(email, password);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult content(String email, String password),
-    TResult loading(),
-    @required TResult orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email, String password)? content,
+    TResult Function()? loading,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (content != null) {
       return content(email, password);
     }
@@ -176,23 +182,20 @@ class _$ContentState with DiagnosticableTreeMixin implements ContentState {
 
   @override
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult content(ContentState value),
-    @required TResult loading(LoadingState value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(ContentState value) content,
+    required TResult Function(LoadingState value) loading,
   }) {
-    assert(content != null);
-    assert(loading != null);
     return content(this);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult content(ContentState value),
-    TResult loading(LoadingState value),
-    @required TResult orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ContentState value)? content,
+    TResult Function(LoadingState value)? loading,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (content != null) {
       return content(this);
     }
@@ -202,12 +205,13 @@ class _$ContentState with DiagnosticableTreeMixin implements ContentState {
 
 abstract class ContentState implements ViewState {
   const factory ContentState(
-      {@required String email, @required String password}) = _$ContentState;
+      {required String email, required String password}) = _$ContentState;
 
-  String get email;
-  String get password;
+  String get email => throw _privateConstructorUsedError;
+  String get password => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ContentStateCopyWith<ContentState> get copyWith;
+  $ContentStateCopyWith<ContentState> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -229,6 +233,7 @@ class _$LoadingStateCopyWithImpl<$Res> extends _$ViewStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
+
 class _$LoadingState with DiagnosticableTreeMixin implements LoadingState {
   const _$LoadingState();
 
@@ -253,23 +258,20 @@ class _$LoadingState with DiagnosticableTreeMixin implements LoadingState {
 
   @override
   @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult content(String email, String password),
-    @required TResult loading(),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email, String password) content,
+    required TResult Function() loading,
   }) {
-    assert(content != null);
-    assert(loading != null);
     return loading();
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult content(String email, String password),
-    TResult loading(),
-    @required TResult orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email, String password)? content,
+    TResult Function()? loading,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (loading != null) {
       return loading();
     }
@@ -278,23 +280,20 @@ class _$LoadingState with DiagnosticableTreeMixin implements LoadingState {
 
   @override
   @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult content(ContentState value),
-    @required TResult loading(LoadingState value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(ContentState value) content,
+    required TResult Function(LoadingState value) loading,
   }) {
-    assert(content != null);
-    assert(loading != null);
     return loading(this);
   }
 
   @override
   @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult content(ContentState value),
-    TResult loading(LoadingState value),
-    @required TResult orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ContentState value)? content,
+    TResult Function(LoadingState value)? loading,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (loading != null) {
       return loading(this);
     }
