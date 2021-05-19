@@ -17,7 +17,7 @@ mixin SingleEventMixin<E, S> on Cubit<S> {
   void send(E event) {
     try {
       _singleEventsController.add(event);
-    } on dynamic catch (error, stackTrace) {
+    } catch (error, stackTrace) {
       onError(error, stackTrace);
     }
   }

@@ -8,6 +8,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+
   runApp(const App());
 }
 
@@ -24,10 +25,8 @@ class App extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
-        create: (BuildContext context) {
-          return LoginCubit();
-        },
-        child: LoginScreen(),
+        create: (context) => LoginCubit(),
+        child: const LoginScreen(),
       ),
     );
   }

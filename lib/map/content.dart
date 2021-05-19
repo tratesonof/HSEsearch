@@ -4,11 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hse_search/base/loading.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapScreen extends StatefulWidget {
+  const MapScreen({Key? key}) : super(key: key);
+
   @override
   State<MapScreen> createState() => MapScreenState();
 }
@@ -26,8 +27,7 @@ class MapScreenState extends State<MapScreen> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final CollectionReference _markers =
-      FirebaseFirestore.instance.collection('markers');
+  final CollectionReference _markers = FirebaseFirestore.instance.collection('markers');
 
   Future<void> addMarker(LatLng location) {
     // Call the user's CollectionReference to add a new user
@@ -42,10 +42,8 @@ class MapScreenState extends State<MapScreen> {
   }
 
   void addPin(LatLng location) {
-    addMarker(screenCoords);
-    setState(() {
-      addingPin = false;
-    });
+    addMarker(location);
+    setState(() => _isAddingPin = false);
   }
 
   Future<void> removeMarker(Marker marker) {
@@ -53,7 +51,7 @@ class MapScreenState extends State<MapScreen> {
     return _markers.doc(marker.markerId.value).delete();
   }
 
-  bool addingPin = false;
+  bool _isAddingPin = false;
 
   late LatLng screenCoords;
 
@@ -64,49 +62,40 @@ class MapScreenState extends State<MapScreen> {
         Scaffold(
           body: StreamBuilder<QuerySnapshot>(
             stream: _markers.snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
                 return const Text('Something went wrong');
               }
 
               return GoogleMap(
-                onCameraMove: (CameraPosition cameraPosition) {
-                  setState(() {
-                    screenCoords = LatLng(cameraPosition.target.latitude,
-                        cameraPosition.target.longitude);
-                  });
-                },
-                onTap: addingPin ? addPin : (LatLng location) {},
+                onTap: _isAddingPin ? addPin : (LatLng location) {},
                 markers: snapshot.data!.docs.map((DocumentSnapshot document) {
                   var docs = document.data() as Map<String, dynamic>;
                   return Marker(
-                    position: LatLng((docs['LatLng'] as GeoPoint).latitude,
-                        (docs['LatLng'] as GeoPoint).longitude),
+                    position: LatLng((docs['LatLng'] as GeoPoint).latitude, (docs['LatLng'] as GeoPoint).longitude),
                     markerId: MarkerId(document.id),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueRed),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
                   );
                 }).toSet(),
                 initialCameraPosition: initialCameraPos,
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
 
-                  bool _serviceEnabled;
-                  PermissionStatus _permissionGranted;
+                  bool isServiceEnabled;
+                  PermissionStatus isPermissionGranted;
 
-                  _serviceEnabled = await location.serviceEnabled();
-                  if (!_serviceEnabled) {
-                    _serviceEnabled = await location.requestService();
-                    if (!_serviceEnabled) {
+                  isServiceEnabled = await location.serviceEnabled();
+                  if (!isServiceEnabled) {
+                    isServiceEnabled = await location.requestService();
+                    if (!isServiceEnabled) {
                       return;
                     }
                   }
 
-                  _permissionGranted = await location.hasPermission();
-                  if (_permissionGranted == PermissionStatus.denied) {
-                    _permissionGranted = await location.requestPermission();
-                    if (_permissionGranted != PermissionStatus.granted) {
+                  isPermissionGranted = await location.hasPermission();
+                  if (isPermissionGranted == PermissionStatus.denied) {
+                    isPermissionGranted = await location.requestPermission();
+                    if (isPermissionGranted != PermissionStatus.granted) {
                       return;
                     }
                   }
@@ -114,7 +103,7 @@ class MapScreenState extends State<MapScreen> {
               );
             },
           ),
-          floatingActionButton: addingPin
+          floatingActionButton: _isAddingPin
               ? Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
@@ -123,9 +112,7 @@ class MapScreenState extends State<MapScreen> {
                       label: const Text('Cancel'),
                       icon: const Icon(Icons.cancel_outlined),
                       onPressed: () {
-                        setState(() {
-                          addingPin = false;
-                        });
+                        setState(() => _isAddingPin = false);
                       },
                     ),
                   ),
@@ -136,9 +123,7 @@ class MapScreenState extends State<MapScreen> {
                     padding: const EdgeInsets.only(left: 25),
                     child: FloatingActionButton.extended(
                       onPressed: () {
-                        setState(() {
-                          addingPin = true;
-                        });
+                        setState(() => _isAddingPin = true);
                       },
                       label: const Text('Add a pin'),
                       icon: const Icon(Icons.directions_boat),
@@ -146,27 +131,18 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
         ),
-        addingPin
-            ? Center(
-                child: IgnorePointer(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: SvgPicture.asset(
-                      'assets/svg/ic_add_marker_pointer.svg',
-                      width: 60,
-                      height: 60,
-                    ),
-                  ),
-                ),
-              )
-            : const SizedBox.shrink(),
+        if (_isAddingPin)
+          IgnorePointer(
+            ignoring: true,
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/svg/ic_add_marker_pointer.svg',
+                width: 60,
+                height: 60,
+              ),
+            ),
+          )
       ],
     );
-  }
-
-  Future<void> _goToTheLake() async {
-    final controller = await _controller.future;
-    await controller
-        .animateCamera(CameraUpdate.newCameraPosition(initialCameraPos));
   }
 }
