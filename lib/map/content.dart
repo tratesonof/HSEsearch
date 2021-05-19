@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -41,7 +42,7 @@ class MapScreenState extends State<MapScreen> {
   }
 
   void addPin(LatLng location) {
-    addMarker(location);
+    addMarker(screenCoords);
     setState(() {
       addingPin = false;
     });
@@ -53,6 +54,8 @@ class MapScreenState extends State<MapScreen> {
   }
 
   bool addingPin = false;
+
+  late LatLng screenCoords;
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +70,13 @@ class MapScreenState extends State<MapScreen> {
                 return const Text('Something went wrong');
               }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingScreen();
-              }
-
               return GoogleMap(
+                onCameraMove: (CameraPosition cameraPosition) {
+                  setState(() {
+                    screenCoords = LatLng(cameraPosition.target.latitude,
+                        cameraPosition.target.longitude);
+                  });
+                },
                 onTap: addingPin ? addPin : (LatLng location) {},
                 markers: snapshot.data!.docs.map((DocumentSnapshot document) {
                   var docs = document.data() as Map<String, dynamic>;
@@ -143,10 +148,15 @@ class MapScreenState extends State<MapScreen> {
         ),
         addingPin
             ? Center(
-                child: SvgPicture.asset(
-                  'assets/svg/ic_add_marker_pointer.svg',
-                  width: 60,
-                  height: 60,
+                child: IgnorePointer(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: SvgPicture.asset(
+                      'assets/svg/ic_add_marker_pointer.svg',
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
                 ),
               )
             : const SizedBox.shrink(),
@@ -156,6 +166,7 @@ class MapScreenState extends State<MapScreen> {
 
   Future<void> _goToTheLake() async {
     final controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(initialCameraPos));
+    await controller
+        .animateCamera(CameraUpdate.newCameraPosition(initialCameraPos));
   }
 }
