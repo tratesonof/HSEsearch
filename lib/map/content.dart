@@ -135,31 +135,33 @@ class MapScreenState extends State<MapScreen> {
           ),
           floatingActionButton: _isAddingPin
               ? Align(
-            alignment: Alignment.bottomLeft,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25),
-                      child: FloatingActionButton.extended(
-                        label: const Text('Confirm'),
-                        icon: const Icon(Icons.cancel_outlined),
-                        onPressed: () {
-                          addPin(screenCoords);
-                        },
+                  alignment: Alignment.bottomLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: FloatingActionButton.extended(
+                          label: const Text('Confirm'),
+                          icon: const Icon(Icons.cancel_outlined),
+                          onPressed: () {
+                            addPin(screenCoords);
+                          },
+                        ),
                       ),
-                    ), Padding(
-                      padding: const EdgeInsets.only(left: 25),
-                      child: FloatingActionButton.extended(
-                        label: const Text('Confirm'),
-                        icon: const Icon(Icons.cancel_outlined),
-                        onPressed: () {
-                          addPin(screenCoords);
-                        },
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: FloatingActionButton.extended(
+                          label: const Text('Confirm'),
+                          icon: const Icon(Icons.cancel_outlined),
+                          onPressed: () {
+                            addPin(screenCoords);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )
+                    ],
+                  ),
+                )
               : Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
