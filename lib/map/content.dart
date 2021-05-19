@@ -135,21 +135,18 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
         ),
-        _isAddingPin
-            ? Center(
-                child: SvgPicture.asset(
-                  'assets/svg/ic_add_marker_pointer.svg',
-                  width: 60,
-                  height: 60,
-                ),
-              )
-            : const SizedBox.shrink(),
+        if (_isAddingPin)
+          IgnorePointer(
+            ignoring: true,
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/svg/ic_add_marker_pointer.svg',
+                width: 60,
+                height: 60,
+              ),
+            ),
+          )
       ],
     );
-  }
-
-  Future<void> _goToTheLake() async {
-    final controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(initialCameraPos));
   }
 }
