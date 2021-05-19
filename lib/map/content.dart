@@ -27,7 +27,8 @@ class MapScreenState extends State<MapScreen> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final CollectionReference _markers = FirebaseFirestore.instance.collection('markers');
+  final CollectionReference _markers =
+      FirebaseFirestore.instance.collection('markers');
 
   Future<void> addMarker(LatLng location) {
     // Call the user's CollectionReference to add a new user
@@ -68,13 +69,20 @@ class MapScreenState extends State<MapScreen> {
               }
 
               return GoogleMap(
-                onTap: _isAddingPin ? addPin : (LatLng location) {},
+                onCameraMove: (CameraPosition cameraPosition) {
+                  setState(() {
+                    screenCoords = LatLng(cameraPosition.target.latitude,
+                        cameraPosition.target.longitude);
+                  });
+                },
                 markers: snapshot.data!.docs.map((DocumentSnapshot document) {
                   var docs = document.data() as Map<String, dynamic>;
                   return Marker(
-                    position: LatLng((docs['LatLng'] as GeoPoint).latitude, (docs['LatLng'] as GeoPoint).longitude),
+                    position: LatLng((docs['LatLng'] as GeoPoint).latitude,
+                        (docs['LatLng'] as GeoPoint).longitude),
                     markerId: MarkerId(document.id),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed),
                   );
                 }).toSet(),
                 initialCameraPosition: initialCameraPos,
@@ -109,10 +117,10 @@ class MapScreenState extends State<MapScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 25),
                     child: FloatingActionButton.extended(
-                      label: const Text('Cancel'),
+                      label: const Text('Confirm'),
                       icon: const Icon(Icons.cancel_outlined),
                       onPressed: () {
-                        setState(() => _isAddingPin = false);
+                        addPin(screenCoords);
                       },
                     ),
                   ),
@@ -134,11 +142,14 @@ class MapScreenState extends State<MapScreen> {
         if (_isAddingPin)
           IgnorePointer(
             ignoring: true,
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/svg/ic_add_marker_pointer.svg',
-                width: 60,
-                height: 60,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/svg/ic_add_marker_pointer.svg',
+                  width: 60,
+                  height: 60,
+                ),
               ),
             ),
           )
