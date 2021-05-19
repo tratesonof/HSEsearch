@@ -134,11 +134,20 @@ class MapScreenState extends State<MapScreen> {
             },
           ),
           floatingActionButton: _isAddingPin
-              ? Column(
-                children: [
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
+              ? Align(
+            alignment: Alignment.bottomLeft,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25),
+                      child: FloatingActionButton.extended(
+                        label: const Text('Confirm'),
+                        icon: const Icon(Icons.cancel_outlined),
+                        onPressed: () {
+                          addPin(screenCoords);
+                        },
+                      ),
+                    ), Padding(
                       padding: const EdgeInsets.only(left: 25),
                       child: FloatingActionButton.extended(
                         label: const Text('Confirm'),
@@ -148,8 +157,8 @@ class MapScreenState extends State<MapScreen> {
                         },
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
               : Align(
                   alignment: Alignment.bottomLeft,
