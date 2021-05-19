@@ -8,6 +8,8 @@ import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapScreen extends StatefulWidget {
+  const MapScreen({Key? key}) : super(key: key);
+
   @override
   State<MapScreen> createState() => MapScreenState();
 }
@@ -25,8 +27,7 @@ class MapScreenState extends State<MapScreen> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final CollectionReference _markers =
-      FirebaseFirestore.instance.collection('markers');
+  final CollectionReference _markers = FirebaseFirestore.instance.collection('markers');
 
   Future<void> addMarker(LatLng location) {
     // Call the user's CollectionReference to add a new user
@@ -43,7 +44,7 @@ class MapScreenState extends State<MapScreen> {
   void addPin(LatLng location) {
     addMarker(location);
     setState(() {
-      addingPin = false;
+      _isAddingPin = false;
     });
   }
 
@@ -52,7 +53,7 @@ class MapScreenState extends State<MapScreen> {
     return _markers.doc(marker.markerId.value).delete();
   }
 
-  bool addingPin = false;
+  bool _isAddingPin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,26 +62,19 @@ class MapScreenState extends State<MapScreen> {
         Scaffold(
           body: StreamBuilder<QuerySnapshot>(
             stream: _markers.snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
                 return const Text('Something went wrong');
               }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingScreen();
-              }
-
               return GoogleMap(
-                onTap: addingPin ? addPin : (LatLng location) {},
+                onTap: _isAddingPin ? addPin : (LatLng location) {},
                 markers: snapshot.data!.docs.map((DocumentSnapshot document) {
                   var docs = document.data() as Map<String, dynamic>;
                   return Marker(
-                    position: LatLng((docs['LatLng'] as GeoPoint).latitude,
-                        (docs['LatLng'] as GeoPoint).longitude),
+                    position: LatLng((docs['LatLng'] as GeoPoint).latitude, (docs['LatLng'] as GeoPoint).longitude),
                     markerId: MarkerId(document.id),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueRed),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
                   );
                 }).toSet(),
                 initialCameraPosition: initialCameraPos,
@@ -109,7 +103,7 @@ class MapScreenState extends State<MapScreen> {
               );
             },
           ),
-          floatingActionButton: addingPin
+          floatingActionButton: _isAddingPin
               ? Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
@@ -119,7 +113,7 @@ class MapScreenState extends State<MapScreen> {
                       icon: const Icon(Icons.cancel_outlined),
                       onPressed: () {
                         setState(() {
-                          addingPin = false;
+                          _isAddingPin = false;
                         });
                       },
                     ),
@@ -132,7 +126,7 @@ class MapScreenState extends State<MapScreen> {
                     child: FloatingActionButton.extended(
                       onPressed: () {
                         setState(() {
-                          addingPin = true;
+                          _isAddingPin = true;
                         });
                       },
                       label: const Text('Add a pin'),
@@ -141,7 +135,7 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
         ),
-        addingPin
+        _isAddingPin
             ? Center(
                 child: SvgPicture.asset(
                   'assets/svg/ic_add_marker_pointer.svg',
