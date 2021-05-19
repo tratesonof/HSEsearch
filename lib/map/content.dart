@@ -19,10 +19,8 @@ class MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controllerCompleter = Completer();
   late GoogleMapController _mapController;
 
-  static final CameraPosition initialCameraPos = const CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  static final CameraPosition initialCameraPos =
+      const CameraPosition(target: LatLng(55.75222, 37.61556), zoom: 16);
 
   //Variable to get users permissions
   Location location = Location();
@@ -63,28 +61,6 @@ class MapScreenState extends State<MapScreen> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(
-            title: GestureDetector(
-              onTap: () async {
-                try {
-                  final position = await geo.Geolocator.getCurrentPosition(
-                    desiredAccuracy: geo.LocationAccuracy.high,
-                  );
-                  final latLng = LatLng(position.latitude, position.longitude);
-
-                  await _mapController.animateCamera(
-                    CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                        target: latLng,
-                        zoom: 16,
-                      ),
-                    ),
-                  );
-                } on Exception catch (_) {}
-              },
-              child: SvgPicture.asset('assets/svg/ic_gsp.svg'),
-            ),
-          ),
           body: StreamBuilder<QuerySnapshot>(
             stream: _markers.snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -133,6 +109,27 @@ class MapScreenState extends State<MapScreen> {
                       return;
                     }
                   }
+
+                  try {
+                    final position = await geo.Geolocator.getCurrentPosition(
+                      desiredAccuracy: geo.LocationAccuracy.high,
+                    );
+                    final latLng =
+                        LatLng(position.latitude, position.longitude);
+
+                    setState(() {
+                      screenCoords = latLng;
+                    });
+
+                    await _mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: latLng,
+                          zoom: 16,
+                        ),
+                      ),
+                    );
+                  } on Exception catch (_) {}
                 },
               );
             },
@@ -142,15 +139,76 @@ class MapScreenState extends State<MapScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
+                        padding: const EdgeInsets.only(left: 25, bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              try {
+                                final position =
+                                    await geo.Geolocator.getCurrentPosition(
+                                  desiredAccuracy: geo.LocationAccuracy.high,
+                                );
+                                final latLng = LatLng(
+                                    position.latitude, position.longitude);
+
+                                await _mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: latLng,
+                                      zoom: 16,
+                                    ),
+                                  ),
+                                );
+                              } on Exception catch (_) {}
+                            },
+                            label: const Text('Location '),
+                            icon: const Icon(Icons.gps_fixed),
+                          ),
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.only(left: 25),
-                        child: FloatingActionButton.extended(
-                          label: const Text('Confirm'),
-                          icon: const Icon(Icons.cancel_outlined),
-                          onPressed: () {
-                            addPin(screenCoords);
-                          },
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: TextButton.icon(
+                                label: const Text('Confirm'),
+                                icon: const Icon(Icons.check),
+                                onPressed: () {
+                                  addPin(screenCoords);
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                ),
+                                child: TextButton.icon(
+                                  label: const Text('Cancel'),
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isAddingPin = false;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -160,25 +218,54 @@ class MapScreenState extends State<MapScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 25),
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            setState(() => _isAddingPin = true);
-                          },
-                          label: const Text('Add a pin'),
-                          icon: const Icon(Icons.directions_boat),
+                        padding: const EdgeInsets.only(left: 25, bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              try {
+                                final position =
+                                    await geo.Geolocator.getCurrentPosition(
+                                  desiredAccuracy: geo.LocationAccuracy.high,
+                                );
+                                final latLng = LatLng(
+                                    position.latitude, position.longitude);
+
+                                await _mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: latLng,
+                                      zoom: 16,
+                                    ),
+                                  ),
+                                );
+                              } on Exception catch (_) {}
+                            },
+                            label: const Text('Location '),
+                            icon: const Icon(Icons.gps_fixed),
+                          ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            setState(() => _isAddingPin = true);
-                          },
-                          label: const Text('Add a pin'),
-                          icon: const Icon(Icons.directions_boat),
+                        padding: const EdgeInsets.only(left: 25),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              setState(() => _isAddingPin = true);
+                            },
+                            label: const Text('Add a pin'),
+                            icon: const Icon(Icons.add_location_alt_rounded),
+                          ),
                         ),
                       ),
                     ],
