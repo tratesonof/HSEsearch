@@ -8,10 +8,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,6 +22,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         accentColor: Colors.white,
       ),
+      debugShowCheckedModeBanner: false,
       home: BlocProvider(
         create: (BuildContext context) {
           return LoginCubit();
