@@ -62,28 +62,6 @@ class MapScreenState extends State<MapScreen> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(
-            title: GestureDetector(
-              onTap: () async {
-                try {
-                  final position = await geo.Geolocator.getCurrentPosition(
-                    desiredAccuracy: geo.LocationAccuracy.high,
-                  );
-                  final latLng = LatLng(position.latitude, position.longitude);
-
-                  await _mapController.animateCamera(
-                    CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                        target: latLng,
-                        zoom: 16,
-                      ),
-                    ),
-                  );
-                } on Exception catch (_) {}
-              },
-              child: SvgPicture.asset('assets/svg/ic_gsp.svg'),
-            ),
-          ),
           body: StreamBuilder<QuerySnapshot>(
             stream: _markers.snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -138,9 +116,40 @@ class MapScreenState extends State<MapScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 25),
+                        padding: const EdgeInsets.only(left: 25, bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              try {
+                                final position = await geo.Geolocator.getCurrentPosition(
+                                  desiredAccuracy: geo.LocationAccuracy.high,
+                                );
+                                final latLng = LatLng(position.latitude, position.longitude);
+
+                                await _mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: latLng,
+                                      zoom: 16,
+                                    ),
+                                  ),
+                                );
+                              } on Exception catch (_) {}
+                            },
+                            label: const Text('Show my location'),
+                            icon: const Icon(Icons.gps_fixed),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25, bottom: 12),
                         child: FloatingActionButton.extended(
                           label: const Text('Confirm'),
                           icon: const Icon(Icons.cancel_outlined),
@@ -164,21 +173,57 @@ class MapScreenState extends State<MapScreen> {
                 )
               : Align(
                   alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 25),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25, bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              try {
+                                final position = await geo.Geolocator.getCurrentPosition(
+                                  desiredAccuracy: geo.LocationAccuracy.high,
+                                );
+                                final latLng = LatLng(position.latitude, position.longitude);
+
+                                await _mapController.animateCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: latLng,
+                                      zoom: 16,
+                                    ),
+                                  ),
+                                );
+                              } on Exception catch (_) {}
+                            },
+                            label: const Text('Show my location'),
+                            icon: const Icon(Icons.gps_fixed),
+                          ),
+                        ),
                       ),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          setState(() => _isAddingPin = true);
-                        },
-                        label: const Text('Add a pin'),
-                        icon: const Icon(Icons.directions_boat),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              setState(() => _isAddingPin = true);
+                            },
+                            label: const Text('Add a pin'),
+                            icon: const Icon(Icons.directions_boat),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
         ),
