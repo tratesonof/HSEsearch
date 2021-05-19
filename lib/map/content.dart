@@ -69,6 +69,7 @@ class MapScreenState extends State<MapScreen> {
               }
 
               return GoogleMap(
+                zoomControlsEnabled: false,
                 onCameraMove: (CameraPosition cameraPosition) {
                   setState(() {
                     screenCoords = LatLng(cameraPosition.target.latitude,
@@ -112,29 +113,39 @@ class MapScreenState extends State<MapScreen> {
             },
           ),
           floatingActionButton: _isAddingPin
-              ? Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 25),
-                    child: FloatingActionButton.extended(
-                      label: const Text('Confirm'),
-                      icon: const Icon(Icons.cancel_outlined),
-                      onPressed: () {
-                        addPin(screenCoords);
-                      },
+              ? Column(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 25),
+                      child: FloatingActionButton.extended(
+                        label: const Text('Confirm'),
+                        icon: const Icon(Icons.cancel_outlined),
+                        onPressed: () {
+                          addPin(screenCoords);
+                        },
+                      ),
                     ),
                   ),
-                )
+                ],
+              )
               : Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 25),
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        setState(() => _isAddingPin = true);
-                      },
-                      label: const Text('Add a pin'),
-                      icon: const Icon(Icons.directions_boat),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: TextButton.icon(
+                        onPressed: () {
+                          setState(() => _isAddingPin = true);
+                        },
+                        label: const Text('Add a pin'),
+                        icon: const Icon(Icons.directions_boat),
+                      ),
                     ),
                   ),
                 ),
@@ -152,7 +163,7 @@ class MapScreenState extends State<MapScreen> {
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }
