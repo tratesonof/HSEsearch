@@ -29,7 +29,8 @@ class MapScreenState extends State<MapScreen> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  final CollectionReference _markers = FirebaseFirestore.instance.collection('markers');
+  final CollectionReference _markers =
+      FirebaseFirestore.instance.collection('markers');
 
   Future<void> addMarker(LatLng location) {
     // Call the user's CollectionReference to add a new user
@@ -95,15 +96,18 @@ class MapScreenState extends State<MapScreen> {
                 zoomControlsEnabled: false,
                 onCameraMove: (CameraPosition cameraPosition) {
                   setState(() {
-                    screenCoords = LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
+                    screenCoords = LatLng(cameraPosition.target.latitude,
+                        cameraPosition.target.longitude);
                   });
                 },
                 markers: snapshot.data!.docs.map((DocumentSnapshot document) {
                   var docs = document.data() as Map<String, dynamic>;
                   return Marker(
-                    position: LatLng((docs['LatLng'] as GeoPoint).latitude, (docs['LatLng'] as GeoPoint).longitude),
+                    position: LatLng((docs['LatLng'] as GeoPoint).latitude,
+                        (docs['LatLng'] as GeoPoint).longitude),
                     markerId: MarkerId(document.id),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed),
                   );
                 }).toSet(),
                 initialCameraPosition: initialCameraPos,
@@ -149,36 +153,35 @@ class MapScreenState extends State<MapScreen> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 25),
-                        child: FloatingActionButton.extended(
-                          label: const Text('Confirm'),
-                          icon: const Icon(Icons.cancel_outlined),
-                          onPressed: () {
-                            addPin(screenCoords);
-                          },
-                        ),
-                      ),
                     ],
                   ),
                 )
               : Align(
                   alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 25),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            setState(() => _isAddingPin = true);
+                          },
+                          label: const Text('Add a pin'),
+                          icon: const Icon(Icons.directions_boat),
+                        ),
                       ),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          setState(() => _isAddingPin = true);
-                        },
-                        label: const Text('Add a pin'),
-                        icon: const Icon(Icons.directions_boat),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 10, 0, 0),
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            setState(() => _isAddingPin = true);
+                          },
+                          label: const Text('Add a pin'),
+                          icon: const Icon(Icons.directions_boat),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
         ),
