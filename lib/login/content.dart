@@ -147,7 +147,7 @@ class _LoginContentState extends State<LoginContent> {
                     }
                   },
                   decoration: InputDecoration(
-                    icon: Icon(Icons.vpn_key),
+                    icon: const Icon(Icons.vpn_key),
                     counterText: '',
                     suffixIcon: IconButton(
                       icon: Icon(
