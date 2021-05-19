@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hse_search/base/loading.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -43,9 +42,7 @@ class MapScreenState extends State<MapScreen> {
 
   void addPin(LatLng location) {
     addMarker(location);
-    setState(() {
-      _isAddingPin = false;
-    });
+    setState(() => _isAddingPin = false);
   }
 
   Future<void> removeMarker(Marker marker) {
@@ -81,21 +78,21 @@ class MapScreenState extends State<MapScreen> {
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
 
-                  bool _serviceEnabled;
-                  PermissionStatus _permissionGranted;
+                  bool isServiceEnabled;
+                  PermissionStatus isPermissionGranted;
 
-                  _serviceEnabled = await location.serviceEnabled();
-                  if (!_serviceEnabled) {
-                    _serviceEnabled = await location.requestService();
-                    if (!_serviceEnabled) {
+                  isServiceEnabled = await location.serviceEnabled();
+                  if (!isServiceEnabled) {
+                    isServiceEnabled = await location.requestService();
+                    if (!isServiceEnabled) {
                       return;
                     }
                   }
 
-                  _permissionGranted = await location.hasPermission();
-                  if (_permissionGranted == PermissionStatus.denied) {
-                    _permissionGranted = await location.requestPermission();
-                    if (_permissionGranted != PermissionStatus.granted) {
+                  isPermissionGranted = await location.hasPermission();
+                  if (isPermissionGranted == PermissionStatus.denied) {
+                    isPermissionGranted = await location.requestPermission();
+                    if (isPermissionGranted != PermissionStatus.granted) {
                       return;
                     }
                   }
@@ -112,9 +109,7 @@ class MapScreenState extends State<MapScreen> {
                       label: const Text('Cancel'),
                       icon: const Icon(Icons.cancel_outlined),
                       onPressed: () {
-                        setState(() {
-                          _isAddingPin = false;
-                        });
+                        setState(() => _isAddingPin = false);
                       },
                     ),
                   ),
@@ -125,9 +120,7 @@ class MapScreenState extends State<MapScreen> {
                     padding: const EdgeInsets.only(left: 25),
                     child: FloatingActionButton.extended(
                       onPressed: () {
-                        setState(() {
-                          _isAddingPin = true;
-                        });
+                        setState(() => _isAddingPin = true);
                       },
                       label: const Text('Add a pin'),
                       icon: const Icon(Icons.directions_boat),

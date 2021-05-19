@@ -4,8 +4,7 @@ import 'package:hse_search/base/single_event.dart';
 import 'package:hse_search/login/single_event.dart';
 import 'package:hse_search/login/state.dart';
 
-class LoginCubit extends Cubit<ViewState>
-    with SingleEventMixin<SingleEvent, ViewState> {
+class LoginCubit extends Cubit<ViewState> with SingleEventMixin<SingleEvent, ViewState> {
   LoginCubit() : super(const ViewState.content(email: '', password: ''));
 
   void login({@required String? email, @required String? password}) async {

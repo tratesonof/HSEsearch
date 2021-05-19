@@ -13,12 +13,13 @@ import 'package:hse_search/map/content.dart';
 import '../base/constants.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleEventSubscription {
+class _LoginScreenState extends State<LoginScreen> with SingleEventSubscription {
   @override
   void didChangeDependencies() {
     final _cubit = context.read<LoginCubit>();
@@ -26,7 +27,8 @@ class _LoginScreenState extends State<LoginScreen>
     setOnSingleEvent(_cubit.singleEvents.listen((event) {
       if (event is NavigateToMapSingleEvent) {
         Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (context) => MapScreen()));
+          CupertinoPageRoute(builder: (context) => const MapScreen()),
+        );
       }
     }));
 
@@ -38,8 +40,9 @@ class _LoginScreenState extends State<LoginScreen>
     return BlocBuilder<LoginCubit, ViewState>(
       builder: (_, state) {
         return state.map(
-            content: (contentState) => LoginContent(contentState),
-            loading: (_) => const LoadingScreen());
+          content: (contentState) => LoginContent(contentState),
+          loading: (_) => const LoadingScreen(),
+        );
       },
     );
   }
@@ -55,22 +58,21 @@ class LoginContent extends StatefulWidget {
 }
 
 class _LoginContentState extends State<LoginContent> {
-  bool passwordInvisibility = true;
   FocusNode? focusEmail;
   FocusNode? focusPassword;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool correctEmail = false;
-  bool correctPassword = false;
+
+  bool _isPasswordInvisible = true;
+  bool _isCorrectEmail = false;
+  bool _isCorrectPassword = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Container(
           color: Colors.grey[200],
           child: Column(
@@ -89,17 +91,17 @@ class _LoginContentState extends State<LoginContent> {
                   focusNode: focusEmail,
                   onFieldSubmitted: passwordController.text.isEmpty
                       ? (_) {
-                    FocusScope.of(context).requestFocus(focusPassword);
-                  }
+                          FocusScope.of(context).requestFocus(focusPassword);
+                        }
                       : null,
                   onChanged: (_) {
                     if (emailRegex.hasMatch(emailController.text)) {
                       setState(() {
-                        correctEmail = true;
+                        _isCorrectEmail = true;
                       });
                     } else {
                       setState(() {
-                        correctEmail = false;
+                        _isCorrectEmail = false;
                       });
                     }
                   },
@@ -121,28 +123,28 @@ class _LoginContentState extends State<LoginContent> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
                 child: TextFormField(
-                  obscureText: passwordInvisibility,
+                  obscureText: _isPasswordInvisible,
                   controller: passwordController,
                   autocorrect: false,
                   maxLength: 64,
                   autofocus: false,
                   focusNode: focusPassword,
-                  onFieldSubmitted: correctEmail && correctPassword
+                  onFieldSubmitted: _isCorrectEmail && _isCorrectPassword
                       ? (_) {
-                    context.read<LoginCubit>().login(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                  }
+                          context.read<LoginCubit>().login(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                        }
                       : null,
                   onChanged: (_) {
                     if (passwordController.text.length > 6) {
                       setState(() {
-                        correctPassword = true;
+                        _isCorrectPassword = true;
                       });
                     } else {
                       setState(() {
-                        correctPassword = false;
+                        _isCorrectPassword = false;
                       });
                     }
                   },
@@ -151,15 +153,9 @@ class _LoginContentState extends State<LoginContent> {
                     counterText: '',
                     suffixIcon: IconButton(
                       icon: Icon(
-                        passwordInvisibility
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        _isPasswordInvisible ? Icons.visibility_off : Icons.visibility,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          passwordInvisibility = !passwordInvisibility;
-                        });
-                      },
+                      onPressed: () => setState(() => _isPasswordInvisible = !_isPasswordInvisible),
                     ),
                     labelText: 'Password',
                   ),
@@ -169,33 +165,29 @@ class _LoginContentState extends State<LoginContent> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: correctEmail && correctPassword
-                          ? Colors.blue
-                          : const Color(0xff9e9e9e),
+                      color: _isCorrectEmail && _isCorrectPassword ? Colors.blue : const Color(0xff9e9e9e),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: TextButton(
-                      onPressed: correctEmail && correctPassword
+                      onPressed: _isCorrectEmail && _isCorrectPassword
                           ? () {
-                        context.read<LoginCubit>().login(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                      }
+                              context.read<LoginCubit>().login(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                  );
+                            }
                           : null,
                       child: Text(
                         'Sign in',
                         style: TextStyle(
                           fontSize: 16,
-                          color: correctEmail && correctPassword
-                              ? Colors.white
-                              : const Color(0xffe0e0e0),
+                          color: _isCorrectEmail && _isCorrectPassword ? Colors.white : const Color(0xffe0e0e0),
                         ),
                       ),
                     ),
