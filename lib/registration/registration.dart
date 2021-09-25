@@ -16,58 +16,14 @@ import 'package:hse_search/registration/registration.dart';
 
 import '../base/constants.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleEventSubscription {
-  @override
-  void didChangeDependencies() {
-    final _cubit = context.read<LoginCubit>();
-
-    setOnSingleEvent(_cubit.singleEvents.listen((event) {
-      if (event is NavigateToMapSingleEvent) {
-        Navigator.of(context).pushReplacement(
-          CupertinoPageRoute(builder: (context) => const MapScreen()),
-        );
-      }
-      if (event is NavigateToRegistrationSingleEvent) {
-        Navigator.of(context).push(
-          CupertinoPageRoute(builder: (context) => const RegistrationScreen()),
-        );
-      }
-    }));
-
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, ViewState>(
-      builder: (_, state) {
-        return state.map(
-          content: (contentState) => LoginContent(contentState),
-          loading: (_) => const LoadingScreen(),
-        );
-      },
-    );
-  }
-}
-
-class LoginContent extends StatefulWidget {
-  const LoginContent(this.state, {Key? key}) : super(key: key);
-
-  final ContentState state;
-
-  @override
-  _LoginContentState createState() => _LoginContentState();
-}
-
-class _LoginContentState extends State<LoginContent> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   FocusNode? focusEmail;
   FocusNode? focusPassword;
   TextEditingController emailController = TextEditingController();
@@ -84,12 +40,12 @@ class _LoginContentState extends State<LoginContent> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Container(
-          color: Colors.grey[200],
+          color: const Color(0xff87cefa),
           child: CurvedWidget(
             child: Container(
               width: double.infinity,
-              height: 750,
-              color: const Color(0xff87cefa),
+              height: double.infinity,
+              color: Colors.grey[200],
               child: Column(
                 children: [
                   Padding(
@@ -150,10 +106,24 @@ class _LoginContentState extends State<LoginContent> {
                       focusNode: focusPassword,
                       onFieldSubmitted: _isCorrectEmail && _isCorrectPassword
                           ? (_) {
-                              context.read<LoginCubit>().login(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                  );
+                              var auth =
+                                  AuthenticationService(FirebaseAuth.instance);
+                              // ignore: cascade_invocations
+                              auth.signUp(
+                                  email: emailController.text,
+                                  password: passwordController.text);
+                              Navigator.pop(context);
+                              final snackBar = SnackBar(
+                                content: const Text('Регистрация успешна!'),
+                                action: SnackBarAction(
+                                  label: 'Ок',
+                                  onPressed: () {
+                                    // Some code to undo the change.
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
                             }
                           : null,
                       onChanged: (_) {
@@ -201,45 +171,33 @@ class _LoginContentState extends State<LoginContent> {
                         child: TextButton(
                           onPressed: _isCorrectEmail && _isCorrectPassword
                               ? () {
-                                  context.read<LoginCubit>().login(
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                      );
+                                  var auth = AuthenticationService(
+                                      FirebaseAuth.instance);
+                                  // ignore: cascade_invocations
+                                  auth.signUp(
+                                      email: emailController.text,
+                                      password: passwordController.text);
+                                  Navigator.pop(context);
+                                  final snackBar = SnackBar(
+                                    content: const Text('Регистрация успешна!'),
+                                    action: SnackBarAction(
+                                      label: 'Ок',
+                                      onPressed: () {
+                                        // Some code to undo the change.
+                                      },
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
                                 }
                               : null,
                           child: Text(
-                            'Авторизоваться',
+                            'Зарегистрироваться',
                             style: TextStyle(
                               fontSize: 16,
                               color: _isCorrectEmail && _isCorrectPassword
                                   ? Colors.white
                                   : const Color(0xffe0e0e0),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: TextButton(
-                          onPressed: () {
-                            context.read<LoginCubit>().registration();
-                          },
-                          child: const Text(
-                            'Зарегистрироваться',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
                             ),
                           ),
                         ),

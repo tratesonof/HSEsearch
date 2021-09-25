@@ -22,6 +22,12 @@ class MapScreenState extends State<MapScreen> {
   static final CameraPosition initialCameraPos =
       const CameraPosition(target: LatLng(55.75222, 37.61556), zoom: 16);
 
+  late Marker tappedMarker;
+
+  bool _isAddingPin = false;
+
+  late LatLng screenCoords;
+
   //Variable to get users permissions
   Location location = Location();
 
@@ -30,10 +36,12 @@ class MapScreenState extends State<MapScreen> {
   final CollectionReference _markers =
       FirebaseFirestore.instance.collection('markers');
 
-  Future<void> addMarker(LatLng location) {
+  final inputDescriptionController = TextEditingController();
+
+  Future<void> addMarker(LatLng location, String description) {
     // Call the user's CollectionReference to add a new user
     return _markers.add({
-      'Description': 'Second capital of Russia',
+      'Description': description,
       // John Doe
       'LatLng': GeoPoint(location.latitude, location.longitude),
       // Stokes and Sons
@@ -42,19 +50,172 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
-  void addPin(LatLng location) {
-    addMarker(location);
+  void addPin(LatLng location, String description) {
+    addMarker(location, description);
     setState(() => _isAddingPin = false);
   }
 
-  Future<void> removeMarker(Marker marker) {
+  Future<void> removeMarker(
+    MarkerId markerId,
+  ) {
     // Call the user's CollectionReference to remove user
-    return _markers.doc(marker.markerId.value).delete();
+    return _markers.doc(markerId.value).delete();
   }
 
-  bool _isAddingPin = false;
+  final emailController = TextEditingController();
 
-  late LatLng screenCoords;
+
+  void _showBottomSheet(String description, MarkerId markerId) {
+
+    final phoneNumberController = TextEditingController();
+    final universityController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    phoneNumberController.text = '89268641850';
+    universityController.text = 'Высшая Школа Экономики';
+    descriptionController.text = description;
+
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return Column(
+            children: [
+              TextFormField(
+                controller: emailController,
+                maxLength: 64,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  icon: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.person)),
+                  labelText: 'Почта',
+                  counterText: '',
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+                enabled: false,
+              ),
+              TextFormField(
+                controller: phoneNumberController,
+                maxLength: 64,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  icon: Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.phone),
+                  ),
+                  labelText: 'Телефон',
+                  counterText: '',
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+                enabled: false,
+              ),
+              TextFormField(
+                controller: universityController,
+                maxLength: 64,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  icon: Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.account_balance),
+                  ),
+                  labelText: 'Университет',
+                  counterText: '',
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+                enabled: false,
+              ),
+              TextFormField(
+                controller: descriptionController,
+                maxLength: 64,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  icon: Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(Icons.info),
+                  ),
+                  labelText: 'Описание',
+                  counterText: '',
+                ),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+                enabled: true,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey,
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        removeMarker(markerId);
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: const Text(
+                      'Удалить маркер',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: const Text('Добавьте описание к метке...'),
+          content: TextFormField(
+            controller: inputDescriptionController,
+            maxLength: 256,
+            maxLines: null,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                addPin(screenCoords, inputDescriptionController.text);
+                setState(() {
+                  emailController.text = 'example@yandex.ru';
+                  inputDescriptionController.text = '';
+                });
+              },
+              child: const Text('Подтвердить'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                inputDescriptionController.text = '';
+              },
+              child: const Text('Отменить'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +245,17 @@ class MapScreenState extends State<MapScreen> {
                     markerId: MarkerId(document.id),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
                         BitmapDescriptor.hueRed),
+                    onTap: () {
+                      _showBottomSheet(
+                          docs['Description'], MarkerId(document.id));
+                    },
                   );
                 }).toSet(),
                 initialCameraPosition: initialCameraPos,
                 onMapCreated: (GoogleMapController controller) async {
                   _controllerCompleter.complete(controller);
                   _mapController = controller;
+                  emailController.text = 'student@yandex.ru';
 
                   bool isServiceEnabled;
                   PermissionStatus isPermissionGranted;
@@ -168,7 +334,7 @@ class MapScreenState extends State<MapScreen> {
                                 );
                               } on Exception catch (_) {}
                             },
-                            label: const Text('Location '),
+                            label: const Text('Моя позиция'),
                             icon: const Icon(Icons.gps_fixed),
                           ),
                         ),
@@ -183,11 +349,9 @@ class MapScreenState extends State<MapScreen> {
                                 color: Colors.white,
                               ),
                               child: TextButton.icon(
-                                label: const Text('Confirm'),
+                                label: const Text('Подтвердить'),
                                 icon: const Icon(Icons.check),
-                                onPressed: () {
-                                  addPin(screenCoords);
-                                },
+                                onPressed: _showDialog,
                               ),
                             ),
                             Padding(
@@ -198,7 +362,7 @@ class MapScreenState extends State<MapScreen> {
                                   color: Colors.white,
                                 ),
                                 child: TextButton.icon(
-                                  label: const Text('Cancel'),
+                                  label: const Text('Отменить'),
                                   icon: const Icon(Icons.close),
                                   onPressed: () {
                                     setState(() {
@@ -247,7 +411,7 @@ class MapScreenState extends State<MapScreen> {
                                 );
                               } on Exception catch (_) {}
                             },
-                            label: const Text('Location '),
+                            label: const Text('Моя позиция'),
                             icon: const Icon(Icons.gps_fixed),
                           ),
                         ),
@@ -263,7 +427,7 @@ class MapScreenState extends State<MapScreen> {
                             onPressed: () {
                               setState(() => _isAddingPin = true);
                             },
-                            label: const Text('Add a pin'),
+                            label: const Text('Добавить маркер'),
                             icon: const Icon(Icons.add_location_alt_rounded),
                           ),
                         ),
@@ -289,4 +453,11 @@ class MapScreenState extends State<MapScreen> {
       ],
     );
   }
+}
+
+class CustomMarker {
+  CustomMarker(this.marker, this.description);
+
+  final Marker marker;
+  final String description;
 }

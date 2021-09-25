@@ -5,3 +5,7 @@ abstract class SingleEvent {
 class NavigateToMapSingleEvent extends SingleEvent {
   const NavigateToMapSingleEvent();
 }
+
+class NavigateToRegistrationSingleEvent extends SingleEvent {
+  const NavigateToRegistrationSingleEvent();
+}
